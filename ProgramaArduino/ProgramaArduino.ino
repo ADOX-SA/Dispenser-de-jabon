@@ -70,22 +70,24 @@ void loop() {
   Funcion_Pantalla(litros); // Funcion para mostrar informacion en la pantalla
 
   // Subir la cantidad de litros
-  subir = Funcion_Leer_Boton(BOTON_SUBIR);
-  if (subir == 1) {
+  subir = Funcion_Subir_Litros(BOTON_SUBIR);
+  /*if (subir == 1) {
     Serial.println("SUBIR");
     if (litros < 20)
       litros ++;
     Serial.println(litros);
-  }
-
+    }
+  */
   // Bajar la cantidad de litros
-  bajar = Funcion_Leer_Boton(BOTON_BAJAR);
-  if (bajar == 1) {
+  bajar = Funcion_Bajar_Litros(BOTON_BAJAR);
+  /*if (bajar == 1) {
     Serial.println("BAJAR");
     if (litros > 1)
       litros --;
     Serial.println(litros);
-  }
+    }
+  */
+
 
   // Cuando se pulsa el botón comenzar
   comenzar = Funcion_Leer_Boton(BOTON_ON);
@@ -340,6 +342,178 @@ int Funcion_Boton_Retardo (int codigo_boton) {
     //while (digitalRead(BOTONES[codigo_boton]) == LOW)
     delay (1);
   }
+
+  return retorno;
+}
+//--- Fin de la función
+//***********************************************
+
+//--- FUNCION SUBIR LITROS AUTOMATICOS
+
+int Funcion_Subir_Litros (int codigo_boton) {
+
+  int retardo_ms = 1500;
+  int boton_presionado = 0, retorno = 0;
+  int i, x = 0;
+
+  //******
+  i = 0;
+
+  if (digitalRead(BOTONES[codigo_boton]) == LOW)
+  {
+    boton_presionado = 1;
+    while (digitalRead(BOTONES[codigo_boton]) == LOW && i < 1000) {
+      delay (1);
+      i++;
+    }
+
+    //******
+    if (i == 1000) {
+      while (digitalRead(BOTONES[codigo_boton]) == LOW) {
+        delay (1);
+        i++;
+
+
+        if (i > 1000 && i < 5000) {
+          x++;
+          if (x == 500) {
+            litros++;
+            Funcion_Pantalla(litros);
+            x = 0;
+          }
+        }
+
+
+        if (i > 5000 && i < 8000) {
+          if (x > 250)
+            x = 0;
+          x++;
+          if (x == 250) {
+            litros++;
+            Funcion_Pantalla(litros);
+            x = 0;
+          }
+        }
+
+
+        if (i > 8000) {
+          if (x > 100)
+            x = 0;
+          x++;
+          if (x == 100) {
+            litros++;
+            Funcion_Pantalla(litros);
+            x = 0;
+          }
+        }
+
+
+      }
+    }
+
+    if (i < 1000) {
+      litros++;
+      Funcion_Pantalla(litros);
+
+      while (digitalRead(BOTONES[codigo_boton]) == LOW)
+        delay (1);
+
+
+    }
+
+  }//llave del if principal
+
+
+
+  return retorno;
+}
+//--- Fin de la función
+//***********************************************
+
+
+//--- FUNCION BAJAR LITROS AUTOMATICOS
+
+int Funcion_Bajar_Litros (int codigo_boton) {
+
+  int retardo_ms = 1500;
+  int boton_presionado = 0, retorno = 0;
+  int i, x = 0;
+
+  //******
+  i = 0;
+
+  if (digitalRead(BOTONES[codigo_boton]) == LOW)
+  {
+    boton_presionado = 1;
+    while (digitalRead(BOTONES[codigo_boton]) == LOW && i < 1000) {
+      delay (1);
+      i++;
+    }
+
+    //******
+    if (i == 1000) {
+      while (digitalRead(BOTONES[codigo_boton]) == LOW) {
+        delay (1);
+        i++;
+
+
+        if (i > 1000 && i < 5000) {
+          x++;
+          if (x == 500) {
+            if (litros > 1) {
+              litros--;
+              Funcion_Pantalla(litros);
+            }
+            x = 0;
+          }
+        }
+
+
+        if (i > 5000 && i < 8000) {
+          if (x > 250)
+            x = 0;
+          x++;
+          if (x == 250) {
+            if (litros > 1) {
+              litros--;
+              Funcion_Pantalla(litros);
+            }
+            x = 0;
+          }
+        }
+
+
+        if (i > 8000) {
+          if (x > 100)
+            x = 0;
+          x++;
+          if (x == 100) {
+            if (litros > 1) {
+              litros--;
+              Funcion_Pantalla(litros);
+            }
+            x = 0;
+          }
+        }
+
+
+      }
+    }
+
+    if (i < 1000) {
+      if (litros > 1) {
+        litros--;
+        Funcion_Pantalla(litros);
+      }
+      while (digitalRead(BOTONES[codigo_boton]) == LOW)
+        delay (1);
+
+
+    }
+
+  }//llave del if principal
+
+
 
   return retorno;
 }
