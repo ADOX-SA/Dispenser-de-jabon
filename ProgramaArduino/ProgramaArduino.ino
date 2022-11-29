@@ -170,18 +170,35 @@ void Funcion_Pantalla(int litros) {
   //Dibujamos Linea.
   display.drawLine(0, 30, 128, 30, SSD1306_WHITE);
 
-  display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(10, 40);
-  display.print(litros);
 
-  display.setTextSize(2);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(40, 40);
-  if (litros > 1)
-    display.print("LITROS.");
-  if (litros == 1)
-    display.print("LITRO.");
+  if (litros < 100) {
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(5, 40);
+    display.print(litros);
+
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(55, 40);
+    if (litros > 1)
+      display.print("LITROS");
+    if (litros == 1)
+      display.print("LITRO");
+  }
+
+  if (litros > 99) {
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(5, 40);
+    display.print(litros);
+
+    display.setTextSize(2);
+    display.setTextColor(SSD1306_WHITE);
+    display.setCursor(55, 40);
+    display.print("LITROS");
+
+  }
+
 
   display.display();
 }
@@ -208,9 +225,9 @@ void Funcion_Pantalla_Con_Reloj (int litros, int minutos, int segundos) {
   display.print("Llenando:  ");
   display.print(litros);
   if (litros > 1)
-    display.print(" litros.");
+    display.print(" litros");
   if (litros == 1)
-    display.print(" litro.");
+    display.print(" litro");
   // TIEMPO RESTANTE
   display.setTextSize(1);
   display.setTextColor(SSD1306_WHITE);
