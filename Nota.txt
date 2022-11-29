@@ -23,5 +23,5 @@ No es necesario conectar las resistencias, ya que usamos las resistencias Pull U
   		cuando queremos reiniciarlo presionando el boton "ON".
  		 #define RETARDO_REINICIO 2000
 
-	+VALOR INICIAL: valor de litros que queremos que muestre la pantalla al iniciar:
-		int litros = 5;
+	+VALOR INICIAL: si nunca se cargo ningun valor en la EEPROM inicia con este valor.
+		int valor_inicial = 5; // Valor inicial

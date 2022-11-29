@@ -18,8 +18,8 @@ int BOTONES[CANT_BOTONES] = {D5, D7, D6};
 //cuando queremos reiniciarlo presionando el boton "ON".
 #define RETARDO_REINICIO 2000
 
-//+VALOR INICIAL: valor de litros que queremos que muestre la pantalla al iniciar:
-int litros = 5; // Valor inicial
+//+VALOR INICIAL: si nunca se cargo ningun valor en la EEPROM inicia con este valor.
+int valor_inicial = 5; // Valor inicial
 
 // Fin de las configuraciones.
 
@@ -39,6 +39,7 @@ Adafruit_SSD1306 display(ANCHO_PANTALLA, ALTO_PANTALLA, &Wire, -1);
 #define BOTON_BAJAR 1
 #define BOTON_ON 2
 
+int litros;
 int comenzar = 0;
 int subir = 0;
 int bajar = 0;
@@ -68,7 +69,7 @@ void setup() {
 
   EEPROM.get(0, litros);
   if (litros < 1)
-    litros = 5;
+    litros = valor_inicial;
 }
 
 void loop() {
@@ -77,23 +78,9 @@ void loop() {
 
   // Subir la cantidad de litros
   subir = Funcion_Subir_Litros(BOTON_SUBIR);
-  /*if (subir == 1) {
-    Serial.println("SUBIR");
-    if (litros < 20)
-      litros ++;
-    Serial.println(litros);
-    }
-  */
+
   // Bajar la cantidad de litros
   bajar = Funcion_Bajar_Litros(BOTON_BAJAR);
-  /*if (bajar == 1) {
-    Serial.println("BAJAR");
-    if (litros > 1)
-      litros --;
-    Serial.println(litros);
-    }
-  */
-
 
   // Cuando se pulsa el botón comenzar
   comenzar = Funcion_Leer_Boton(BOTON_ON);
@@ -116,10 +103,8 @@ void loop() {
       while (frenar == 0 && i > 0) {
         i--;
         delay(1);
-
         pausa = 0;
         aux = 0;
-
         pausa = Funcion_Boton_Retardo(BOTON_ON);
         //***
         if (pausa == 1) { // Se presiono sin retardo
@@ -139,7 +124,6 @@ void loop() {
           Funcion_Pantalla_Fin();
         }
         //***
-
       }
     } // Llave del while
     if (frenar == 0) {
@@ -151,8 +135,6 @@ void loop() {
     comenzar = 0;
   } // Cierre del if
 } // Cierre del loop
-
-
 
 //--- Funcion para leer el estado del botón.
 //--- La funcion devuelve 1 si se presiona el botón,
@@ -205,7 +187,6 @@ void Funcion_Pantalla(int litros) {
 }
 //--- Fin de la función
 
-
 //--- Funcion para mostrar "FIN" en la pantalla.
 void Funcion_Pantalla_Fin() {
   display.clearDisplay();
@@ -216,7 +197,6 @@ void Funcion_Pantalla_Fin() {
   display.display();
 }
 //--- Fin de la función
-
 
 //--- Función para mostrar la pantalla con el contador.
 void Funcion_Pantalla_Con_Reloj (int litros, int minutos, int segundos) {
@@ -253,7 +233,6 @@ void Funcion_Pantalla_Con_Reloj (int litros, int minutos, int segundos) {
 }
 //--- Fin de la función
 
-
 //--- Función que devuelve la cantidad de minutos.
 int Funcion_Minutos(int tiempo) {
   int minutos = 0;
@@ -271,7 +250,6 @@ int Funcion_Segundos(int tiempo) {
   return segundos;
 }
 //--- Fin de la función
-
 
 //--- Función que muestra la pantalla con el sistema pausado.
 void Funcion_Pantalla_Pausada (int minutos, int segundos) {
@@ -305,8 +283,6 @@ void Funcion_Pantalla_Pausada (int minutos, int segundos) {
 }
 //--- Fin de la función
 
-
-
 //******************************************
 //--- Funcion para leer el estado del botón CON RETARDO.
 //--- La funcion devuelve 1 si se presiona el botón
@@ -331,7 +307,6 @@ int Funcion_Boton_Retardo (int codigo_boton) {
       i++;
     }
   }
-  //------
   // Sin retardo
   if (boton_presionado == 1 && i < retardo_ms)
   {
@@ -340,8 +315,6 @@ int Funcion_Boton_Retardo (int codigo_boton) {
     while (digitalRead(BOTONES[codigo_boton]) == LOW)
       delay (1);
   }
-
-  //------
   // Con Retardo
   if (boton_presionado == 1 && i == retardo_ms)
   {
@@ -350,14 +323,12 @@ int Funcion_Boton_Retardo (int codigo_boton) {
     //while (digitalRead(BOTONES[codigo_boton]) == LOW)
     delay (1);
   }
-
   return retorno;
 }
 //--- Fin de la función
 //***********************************************
 
 //--- FUNCION SUBIR LITROS AUTOMATICOS
-
 int Funcion_Subir_Litros (int codigo_boton) {
 
   int retardo_ms = 1500;
@@ -374,15 +345,12 @@ int Funcion_Subir_Litros (int codigo_boton) {
       delay (1);
       i++;
     }
-
     //******
     if (i == 1000) {
       while (digitalRead(BOTONES[codigo_boton]) == LOW) {
         delay (1);
         i++;
-
-
-        if (i > 1000 && i < 5000) {
+        if (i > 1000 && i < 3000) {
           x++;
           if (x == 500) {
             litros++;
@@ -390,9 +358,7 @@ int Funcion_Subir_Litros (int codigo_boton) {
             x = 0;
           }
         }
-
-
-        if (i > 5000 && i < 8000) {
+        if (i > 3000 && i < 8000) {
           if (x > 250)
             x = 0;
           x++;
@@ -414,42 +380,28 @@ int Funcion_Subir_Litros (int codigo_boton) {
             x = 0;
           }
         }
-
-
       }
     }
 
     if (i < 1000) {
       litros++;
       Funcion_Pantalla(litros);
-
       while (digitalRead(BOTONES[codigo_boton]) == LOW)
         delay (1);
-
-
     }
-
   }//llave del if principal
-
-
-
   return retorno;
 }
 //--- Fin de la función
 //***********************************************
 
-
 //--- FUNCION BAJAR LITROS AUTOMATICOS
-
 int Funcion_Bajar_Litros (int codigo_boton) {
-
   int retardo_ms = 1500;
   int boton_presionado = 0, retorno = 0;
   int i, x = 0;
-
   //******
   i = 0;
-
   if (digitalRead(BOTONES[codigo_boton]) == LOW)
   {
     boton_presionado = 1;
@@ -463,7 +415,7 @@ int Funcion_Bajar_Litros (int codigo_boton) {
         delay (1);
         i++;
 
-        if (i > 1000 && i < 5000) {
+        if (i > 1000 && i < 3000) {
           x++;
           if (x == 500) {
             if (litros > 1) {
@@ -473,7 +425,7 @@ int Funcion_Bajar_Litros (int codigo_boton) {
             x = 0;
           }
         }
-        if (i > 5000 && i < 8000) {
+        if (i > 3000 && i < 8000) {
           if (x > 250)
             x = 0;
           x++;
