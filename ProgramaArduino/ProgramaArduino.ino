@@ -29,6 +29,7 @@ int litros = 5; // Valor inicial
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <EEPROM.h>
 
 #define ANCHO_PANTALLA 128 // Ancho pantalla OLED
 #define ALTO_PANTALLA 64 // Alto pantalla OLED
@@ -57,12 +58,17 @@ void setup() {
     while (true);
   }
 
+  EEPROM.begin(512);
   Serial.begin(9600);
   pinMode(D5, INPUT_PULLUP);
   pinMode(D6, INPUT_PULLUP);
   pinMode(D7, INPUT_PULLUP);
 
   pinMode(D3, OUTPUT);
+
+  EEPROM.get(0, litros);
+  if (litros < 1)
+    litros = 5;
 }
 
 void loop() {
@@ -92,6 +98,8 @@ void loop() {
   // Cuando se pulsa el botón comenzar
   comenzar = Funcion_Leer_Boton(BOTON_ON);
   if (comenzar == 1) {
+    EEPROM.put(0, litros);
+    EEPROM.commit();
     tiempo_restante = TIEMPO_POR_LITRO * litros;
     while ((frenar == 0) && tiempo_restante > 0) {
 
@@ -449,13 +457,11 @@ int Funcion_Bajar_Litros (int codigo_boton) {
       delay (1);
       i++;
     }
-
     //******
     if (i == 1000) {
       while (digitalRead(BOTONES[codigo_boton]) == LOW) {
         delay (1);
         i++;
-
 
         if (i > 1000 && i < 5000) {
           x++;
@@ -467,8 +473,6 @@ int Funcion_Bajar_Litros (int codigo_boton) {
             x = 0;
           }
         }
-
-
         if (i > 5000 && i < 8000) {
           if (x > 250)
             x = 0;
@@ -481,8 +485,6 @@ int Funcion_Bajar_Litros (int codigo_boton) {
             x = 0;
           }
         }
-
-
         if (i > 8000) {
           if (x > 100)
             x = 0;
@@ -495,8 +497,6 @@ int Funcion_Bajar_Litros (int codigo_boton) {
             x = 0;
           }
         }
-
-
       }
     }
 
@@ -507,14 +507,8 @@ int Funcion_Bajar_Litros (int codigo_boton) {
       }
       while (digitalRead(BOTONES[codigo_boton]) == LOW)
         delay (1);
-
-
     }
-
   }//llave del if principal
-
-
-
   return retorno;
 }
 //--- Fin de la función
