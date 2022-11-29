@@ -12,7 +12,7 @@
 //En este orden: { Subir , Bajar , ON}
 //Los botones deben estar conectados en PULL_UP (no es necesaria resistencias)
 #define CANT_BOTONES 3 // Cantidad de botones que vamos a conectar.
-int BOTONES[CANT_BOTONES] = {D5, D7, D6};
+int BOTONES[CANT_BOTONES] = {D5, D6, D7};
 
 //+RETARDO REINICIO: el tiempo de retardo (en milisegundos) que espera el programa
 //cuando queremos reiniciarlo presionando el boton "ON".
@@ -328,73 +328,7 @@ int Funcion_Boton_Retardo (int codigo_boton) {
 //--- Fin de la función
 //***********************************************
 
-//--- FUNCION SUBIR LITROS AUTOMATICOS
-int Funcion_Subir_Litros (int codigo_boton) {
-
-  int retardo_ms = 1500;
-  int boton_presionado = 0, retorno = 0;
-  int i, x = 0;
-
-  //******
-  i = 0;
-
-  if (digitalRead(BOTONES[codigo_boton]) == LOW)
-  {
-    boton_presionado = 1;
-    while (digitalRead(BOTONES[codigo_boton]) == LOW && i < 1000) {
-      delay (1);
-      i++;
-    }
-    //******
-    if (i == 1000) {
-      while (digitalRead(BOTONES[codigo_boton]) == LOW) {
-        delay (1);
-        i++;
-        if (i > 1000 && i < 3000) {
-          x++;
-          if (x == 500) {
-            litros++;
-            Funcion_Pantalla(litros);
-            x = 0;
-          }
-        }
-        if (i > 3000 && i < 8000) {
-          if (x > 250)
-            x = 0;
-          x++;
-          if (x == 250) {
-            litros++;
-            Funcion_Pantalla(litros);
-            x = 0;
-          }
-        }
-
-
-        if (i > 8000) {
-          if (x > 100)
-            x = 0;
-          x++;
-          if (x == 100) {
-            litros++;
-            Funcion_Pantalla(litros);
-            x = 0;
-          }
-        }
-      }
-    }
-
-    if (i < 1000) {
-      litros++;
-      Funcion_Pantalla(litros);
-      while (digitalRead(BOTONES[codigo_boton]) == LOW)
-        delay (1);
-    }
-  }//llave del if principal
-  return retorno;
-}
-//--- Fin de la función
 //***********************************************
-
 //--- FUNCION BAJAR LITROS AUTOMATICOS
 int Funcion_Bajar_Litros (int codigo_boton) {
   int retardo_ms = 1500;
@@ -405,19 +339,23 @@ int Funcion_Bajar_Litros (int codigo_boton) {
   if (digitalRead(BOTONES[codigo_boton]) == LOW)
   {
     boton_presionado = 1;
-    while (digitalRead(BOTONES[codigo_boton]) == LOW && i < 1000) {
+    if (litros > 1) {
+      litros--;
+      Funcion_Pantalla(litros);
+    }
+    while (digitalRead(BOTONES[codigo_boton]) == LOW && i < 500) {
       delay (1);
       i++;
     }
     //******
-    if (i == 1000) {
+    if (i == 500) {
       while (digitalRead(BOTONES[codigo_boton]) == LOW) {
         delay (1);
         i++;
 
         if (i > 1000 && i < 3000) {
           x++;
-          if (x == 500) {
+          if (x == 300) {
             if (litros > 1) {
               litros--;
               Funcion_Pantalla(litros);
@@ -426,10 +364,10 @@ int Funcion_Bajar_Litros (int codigo_boton) {
           }
         }
         if (i > 3000 && i < 8000) {
-          if (x > 250)
+          if (x > 170)
             x = 0;
           x++;
-          if (x == 250) {
+          if (x == 170) {
             if (litros > 1) {
               litros--;
               Funcion_Pantalla(litros);
@@ -451,17 +389,74 @@ int Funcion_Bajar_Litros (int codigo_boton) {
         }
       }
     }
-
-    if (i < 1000) {
-      if (litros > 1) {
-        litros--;
-        Funcion_Pantalla(litros);
-      }
-      while (digitalRead(BOTONES[codigo_boton]) == LOW)
-        delay (1);
-    }
-  }//llave del if principal
+    while (digitalRead(BOTONES[codigo_boton]) == LOW)
+      delay (1);
+  }
   return retorno;
-}
+}//llave del if principal
+//--- Fin de la función
+//***********************************************
+
+
+//***********************************************
+//--- FUNCION SUBIR LITROS AUTOMATICOS
+int Funcion_Subir_Litros (int codigo_boton) {
+  int retardo_ms = 1500;
+  int boton_presionado = 0, retorno = 0;
+  int i, x = 0;
+  //******
+  i = 0;
+  if (digitalRead(BOTONES[codigo_boton]) == LOW)
+  {
+    boton_presionado = 1;
+    litros++;
+    Funcion_Pantalla(litros);
+
+    while (digitalRead(BOTONES[codigo_boton]) == LOW && i < 500) {
+      delay (1);
+      i++;
+    }
+    //******
+    if (i == 500) {
+      while (digitalRead(BOTONES[codigo_boton]) == LOW) {
+        delay (1);
+        i++;
+
+        if (i > 1000 && i < 3000) {
+          x++;
+          if (x == 300) {
+            litros++;
+            Funcion_Pantalla(litros);
+            x = 0;
+          }
+        }
+        if (i > 3000 && i < 8000) {
+          if (x > 170)
+            x = 0;
+          x++;
+          if (x == 170) {
+            litros++;
+            Funcion_Pantalla(litros);
+            x = 0;
+          }
+        }
+        if (i > 8000) {
+          if (x > 100)
+            x = 0;
+          x++;
+          if (x == 100) {
+            litros++;
+            Funcion_Pantalla(litros);
+            x = 0;
+          }
+        }
+      }
+    }
+    while (digitalRead(BOTONES[codigo_boton]) == LOW)
+      delay (1);
+  }
+  return retorno;
+}//llave del if principal
+
 //--- Fin de la función
 //***********************************************
