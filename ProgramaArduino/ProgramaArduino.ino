@@ -52,12 +52,17 @@ int minutos = 59;
 int segundos = 59;
 
 void setup() {
+  /*
   if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
 #ifdef __DEBUG__
     Serial.println("No se encuentra la pantalla OLED");
 #endif
     while (true);
   }
+*/
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  display.display();
 
   EEPROM.begin(512);
   Serial.begin(9600);
@@ -66,10 +71,12 @@ void setup() {
   pinMode(D7, INPUT_PULLUP);
 
   pinMode(D3, OUTPUT);
+  pinMode(D4, OUTPUT);
 
   EEPROM.get(0, litros);
-  if (litros < 1)
+  if (litros < 1 || litros > 999)
     litros = valor_inicial;
+
 }
 
 void loop() {
