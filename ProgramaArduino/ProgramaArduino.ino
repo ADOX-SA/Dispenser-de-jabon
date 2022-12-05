@@ -1,7 +1,7 @@
 // Configuraciones.
 
 //+PIN DE SALIDA: pin donde se conecta la bomba.
-#define PIN_SALIDA D3 // Colocar en "D3" el pin que queremos utilizar como salida
+#define PIN_SALIDA D8 // Colocar en "D3" el pin que queremos utilizar como salida
 
 //+TIEMPO POR LITRO: tiempo que la bomba permanece encedida por cada litro en segundos.
 #define TIEMPO_POR_LITRO 5 // Estariamos prendiendo la bomba 5 segundos por cada litro seleccionado.
@@ -72,6 +72,7 @@ void setup() {
 
   pinMode(D3, OUTPUT);
   pinMode(D4, OUTPUT);
+  pinMode(D8, OUTPUT);
 
   EEPROM.get(0, litros);
   if (litros < 1 || litros > 999)
