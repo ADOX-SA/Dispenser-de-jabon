@@ -4,7 +4,7 @@
 #define PIN_SALIDA D8 // Colocar en "D3" el pin que queremos utilizar como salida
 
 //+TIEMPO POR LITRO: tiempo que la bomba permanece encedida por cada litro en segundos.
-#define TIEMPO_POR_LITRO 5 // Estariamos prendiendo la bomba 5 segundos por cada litro seleccionado.
+#define TIEMPO_POR_LITRO 3 // Estariamos prendiendo la bomba 5 segundos por cada litro seleccionado.
 //Ej: con "TIEMPO_POR_LITRO = 5" si seleccionamos 10 litros
 //la bomba estará encendida 50 segundos.
 
