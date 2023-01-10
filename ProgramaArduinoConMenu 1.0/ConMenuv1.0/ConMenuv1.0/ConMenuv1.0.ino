@@ -479,6 +479,8 @@ void Funcion_Boton_Inicio() {
 
       digitalWrite(PIN_SALIDA, HIGH); // Enciendo la bomba
 
+
+
       if (segundos != 0)
         segundos--;
 
@@ -486,11 +488,12 @@ void Funcion_Boton_Inicio() {
         segundos = 59;
         if (minutos != 0)
           minutos--;
-        else if (minutos == 0)
+        else if (minutos == 0) {
           tiempo_restante = 0;
+          segundos = 0;
+
+        }
       }
-
-
 
       Funcion_Pantalla_Con_Reloj(litros, minutos, segundos);
 

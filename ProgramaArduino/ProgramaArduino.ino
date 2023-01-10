@@ -53,13 +53,13 @@ int segundos = 59;
 
 void setup() {
   /*
-  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
-#ifdef __DEBUG__
+    if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    #ifdef __DEBUG__
     Serial.println("No se encuentra la pantalla OLED");
-#endif
+    #endif
     while (true);
-  }
-*/
+    }
+  */
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
   display.display();
@@ -73,6 +73,32 @@ void setup() {
   pinMode(D3, OUTPUT);
   pinMode(D4, OUTPUT);
   pinMode(D8, OUTPUT);
+
+  pinMode(D0, OUTPUT);
+  pinMode(D4, OUTPUT);
+
+  //Led que marcan el inicio:
+  digitalWrite(D0, HIGH);
+  digitalWrite(D4, HIGH);
+  int i = 0;
+  for (int i = 0; i < 10; i++) {
+    digitalWrite(D0, LOW);
+    delay(50);
+    digitalWrite(D0, HIGH);
+    delay(50);
+  }
+  for (int i = 0; i < 10; i++) {
+    digitalWrite(D4, LOW);
+    delay(50);
+    digitalWrite(D4, HIGH);
+    delay(50);
+  }
+  digitalWrite(D0, LOW);
+  digitalWrite(D4, LOW);
+  delay(250);
+  digitalWrite(D0, HIGH);
+  digitalWrite(D4, HIGH);
+  //Fin de Leds.
 
   EEPROM.get(0, litros);
   if (litros < 1 || litros > 999)
