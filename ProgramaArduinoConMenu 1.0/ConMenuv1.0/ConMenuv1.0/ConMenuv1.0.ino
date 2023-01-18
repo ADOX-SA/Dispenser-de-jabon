@@ -30,6 +30,9 @@ void setup() {
   pinMode(D5, INPUT_PULLUP);
   pinMode(D6, INPUT_PULLUP);
   pinMode(D7, INPUT_PULLUP);
+
+  pinMode(PIN_SALIDA, OUTPUT);
+
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
 
   EEPROM.get(dir_litros, litros);
@@ -391,10 +394,12 @@ void Bajar_Tiempo () {
   int i, x = 0;
   //******
   i = 0;
+  float minimo=1.1;
   if (digitalRead(BOTONES[BOTON_BAJAR]) == LOW)
   {
     boton_presionado = 1;
-    tiempo_litro -= 0.1 ;
+    if (tiempo_litro > minimo)
+      tiempo_litro -= 0.1 ;
     Pantalla_Menu();
 
     while (digitalRead(BOTONES[BOTON_BAJAR]) == LOW && i < 500) {
@@ -410,7 +415,8 @@ void Bajar_Tiempo () {
         if (i > 1000 && i < 3000) {
           x++;
           if (x == 300) {
-            tiempo_litro -= 0.1 ;
+            if (tiempo_litro > minimo)
+              tiempo_litro -= 0.1 ;
             Pantalla_Menu();
             x = 0;
           }
@@ -420,7 +426,8 @@ void Bajar_Tiempo () {
             x = 0;
           x++;
           if (x == 170) {
-            tiempo_litro -= 0.1 ;
+            if (tiempo_litro > minimo)
+              tiempo_litro -= 0.1 ;
             Pantalla_Menu();
             x = 0;
           }
@@ -430,7 +437,8 @@ void Bajar_Tiempo () {
             x = 0;
           x++;
           if (x == 100) {
-            tiempo_litro -= 0.1 ;
+            if (tiempo_litro > minimo)
+              tiempo_litro -= 0.1 ;
             Pantalla_Menu();
             x = 0;
           }
@@ -461,25 +469,25 @@ void Funcion_Boton_Inicio() {
     minutos = (int) tiempo_restante / 60;
 
     segundos = (int) (((tiempo_restante / 60) - minutos) * 60);
+    if(segundos==0)
+    segundos=1;
 
-    /*
-        Serial.print("Litros:");
-        Serial.println(litros);
-        Serial.print("Tiempo por litro:");
-        Serial.println(tiempo_litro);
-        Serial.print("Tiempo_restante:");
-        Serial.println(tiempo_restante);
-        Serial.print("Minutos:");
-        Serial.println(minutos);
-        Serial.print("Segundos:");
-        Serial.println(segundos);
-    */
+    Serial.print("Litros:");
+    Serial.println(litros);
+    Serial.print("Tiempo por litro:");
+    Serial.println(tiempo_litro);
+    Serial.print("Tiempo_restante:");
+    Serial.println(tiempo_restante);
+    Serial.print("Minutos:");
+    Serial.println(minutos);
+    Serial.print("Segundos:");
+    Serial.println(segundos);
+
+    Funcion_Pantalla_Con_Reloj(litros, minutos, segundos);
 
     while ((frenar == 0) && tiempo_restante > 0) {
 
       digitalWrite(PIN_SALIDA, HIGH); // Enciendo la bomba
-
-
 
       if (segundos != 0)
         segundos--;
@@ -491,7 +499,6 @@ void Funcion_Boton_Inicio() {
         else if (minutos == 0) {
           tiempo_restante = 0;
           segundos = 0;
-
         }
       }
 
