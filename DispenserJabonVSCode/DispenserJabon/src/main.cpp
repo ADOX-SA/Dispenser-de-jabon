@@ -6,6 +6,13 @@
 #include <Adafruit_SSD1306.h>
 #include <EEPROM.h>
 
+/*
+Recordar (para centrar en la OLED):
+en la pantalla OLED el ancho de los caracteres (y el espacio) es:
+display.setTextSize(2); ---> tamaño 12 (letra y espacio)
+display.setTextSize(1); ---> tamaño 6 (letra y espacio)
+*/
+
 #define PIN_SALIDA D8 // Colocar en "D3" el pin que queremos utilizar como salida
 #define RETARDO_REINICIO 2000
 
@@ -20,13 +27,14 @@ int BOTONES[CANT_BOTONES] = {D5, D6, D7};
 #define BOTON_SUBIR 0
 #define BOTON_BAJAR 1
 #define BOTON_ON 2
-
 int litros = 5;
 float tiempo_litro;
 int dir_litros = 5;
 int dir_tiempo = 0;
+/*
 int velocidad_motor;
 int dir_velocidad_motor=10;
+*/
 
 // Declaracion de funciones:
 void Funcion_Boton_Retardo(int, int);
@@ -64,9 +72,11 @@ void setup()
   if (tiempo_litro < 1 || tiempo_litro > 999)
     tiempo_litro = 1.25;
 
-  EEPROM.get(dir_velocidad_motor, velocidad_motor);
-  if (velocidad_motor < 0 || velocidad_motor > 255)
-    velocidad_motor=164;
+  /*
+    EEPROM.get(dir_velocidad_motor, velocidad_motor);
+    if (velocidad_motor < 0 || velocidad_motor > 255)
+      velocidad_motor=164;
+  */
 }
 
 void loop()
@@ -383,15 +393,13 @@ void Funcion_Menu()
 //************ FUNCION SUBIR TIEMPO ***********************
 void Subir_Tiempo()
 {
-
-  int boton_presionado = 0, retorno = 0;
   int i, x = 0;
   float paso = 0.01;
   //******
   i = 0;
   if (digitalRead(BOTONES[BOTON_SUBIR]) == LOW)
   {
-    boton_presionado = 1;
+    
     tiempo_litro += paso;
     Pantalla_Menu();
 
@@ -455,8 +463,6 @@ void Subir_Tiempo()
 //************ FUNCION BAJAR TIEMPO ***********************
 void Bajar_Tiempo()
 {
-  int retardo_ms = 1500;
-  int boton_presionado = 0, retorno = 0;
   int i, x = 0;
   float paso = 0.01;
   //******
@@ -464,7 +470,6 @@ void Bajar_Tiempo()
   float minimo = 0.11;
   if (digitalRead(BOTONES[BOTON_BAJAR]) == LOW)
   {
-    boton_presionado = 1;
     if (tiempo_litro > minimo)
       tiempo_litro -= paso;
     Pantalla_Menu();
@@ -533,7 +538,7 @@ void Bajar_Tiempo()
 void Funcion_Boton_Inicio()
 {
   // Cuando se pulsa el botón comenzar
-  int i = 0, frenar = 0, comenzar = 0, pausa = 0, aux = 0;
+  int frenar = 0, pausa = 0;
   float tiempo_restante = 0;
   int minutos = 0;
   int segundos = 0;
@@ -597,7 +602,7 @@ void Funcion_Boton_Inicio()
     {
 
       tiempo_ant = millis();
-      analogWrite(PIN_SALIDA,velocidad_motor);// Enciendo la bomba
+      digitalWrite(PIN_SALIDA, HIGH); // Enciendo la bomba
       // Decremento del tiempo
       if (centesimos == 0)
       {
@@ -613,9 +618,10 @@ void Funcion_Boton_Inicio()
             minutos--;
             segundos = 59;
           }
-          else if (minutos == 0){
+          else if (minutos == 0)
+          {
             tiempo_restante = 0;
-          digitalWrite(PIN_SALIDA,LOW);// APAGAR
+            digitalWrite(PIN_SALIDA, LOW); // APAGAR
           }
         }
       }
@@ -642,19 +648,19 @@ void Funcion_Boton_Inicio()
 
         */
         Serial.print("\n Cent:" + String(centesimos) + " DifIn: " + String(diferencia) + " Tant: " + String(tiempo_ant) + " T: " + String(tiempo));
-        
+
         if (centesimos > (diferencia / 10))
         {
           centesimos -= (diferencia / 10);
           diferencia = 0;
           Funcion_Pantalla_Con_Reloj(litros, minutos, segundos, centesimos);
         }
-        else{
+        else
+        {
           centesimos = 0;
         }
         /* Verificamos si se presiono el boton pausa: */
         pausa = 0;
-        aux = 0;
         pausa = Funcion_Boton_Retardo2(BOTON_ON);
         if (pausa == 1)
         { // Se presiono sin retardo
@@ -668,7 +674,7 @@ void Funcion_Boton_Inicio()
           }
           if (pausa == 1)
           {
-            analogWrite(PIN_SALIDA,velocidad_motor);// Enciendo la bomba
+            digitalWrite(PIN_SALIDA, HIGH); // Enciendo la bomba
           }
         }
         if (pausa == 2)
@@ -682,12 +688,12 @@ void Funcion_Boton_Inicio()
 
       Serial.print("\n Afuera del while");
 
-    }// Llave del while
+    }                              // Llave del while
     digitalWrite(PIN_SALIDA, LOW); // APAGO LA BOMBA
     Funcion_Pantalla_Fin();
     delay(2500); // Muestro "FIN" en la pantalla por este tiempo.
     frenar = 0;
-    comenzar = 0;
+    
   } // Cierre del if
 }
 
